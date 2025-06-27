@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Bird Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: "Comfortaa", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size:15px;
+        }
+        body {
+            background-color: #f8e3fc;
+            display: flex;
+            padding:0px;
+            margin:0;
+        }
+        .main {
+            background-color: #2d3b2d;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width:100%;
+            height: 92vh;
+            border-radius: 0 0 80px 80px;
+            flex-direction: column;
+            gap:15px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 50px;
+            font-family: "DM Serif Display", serif;
+            font-weight: 400;
+            font-style: normal;
+            color: #f8e3fc;
+            margin: 0;
+
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            padding: 0 30px 0 30px;
+        }
+        
+        fieldset {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-radius: 20px;
+            justify-content: center;
+            padding: 10px 20px 20px 20px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-wrapper .round label {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            height: 13px;
+            width: 13px;
+            display: block;
+            position: relative;
+        }
+
+        .checkbox-wrapper .round label:after {
+            border: 2px solid #fff;
+            border-top: none;
+            border-right: none;
+            content: "";
+            height: 2px;
+            left: 2px;
+            opacity: 0;
+            position: absolute;
+            top: 4px;
+            transform: rotate(-45deg);
+            width: 7px;
+        }
+
+        .checkbox-wrapper .round input[type="checkbox"] {
+            visibility: hidden;
+            display: none;
+            opacity: 0;
+        }
+
+        .checkbox-wrapper .round input[type="checkbox"]:checked + label {
+            background-color: #646868;
+            border-color: #646868;
+        }
+
+        .checkbox-wrapper .round input[type="checkbox"]:checked + label:after {
+            opacity: 1;
+        }
+
+        .checkbox-wrapper .label-text {
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button, .filebutton {
+            font-family: "Comfortaa", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size:15px;
+            background-color: #191d19;
+            color: #f8e3fc;
+            outline: 0;
+            border: 0;
+            border-radius: 7px;
+            padding: 12px;
+            display: inline-block;
+        }
+        input[type="file"] {
+  display: none;
+}
+        #result {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>Random Bird Generator</h1>
+    
+        <form id="birdForm">
+            <fieldset>
+                <legend>Breeding Status</legend>
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="resb" id="resb">
+                        <label for="resb"></label>
+                    </div>
+                    <span class="label-text">Resident Breeder</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="mb" id="mb">
+                        <label for="mb"></label>
+                    </div>
+                    <span class="label-text">Migrant Breeder</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="introb" id="introb">
+                        <label for="introb"></label>
+                    </div>
+                    <span class="label-text">Introduced Breeder</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="sb" id="sb">
+                        <label for="sb"></label>
+                    </div>
+                    <span class="label-text">Scarce Breeder</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="sv" id="sv">
+                        <label for="sv"></label>
+                    </div>
+                    <span class="label-text">Scarce Visitor</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="v" id="v">
+                        <label for="v"></label>
+                    </div>
+                    <span class="label-text">Visitor</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="wv" id="wv">
+                        <label for="wv"></label>
+                    </div>
+                    <span class="label-text">Winter Visitor</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="breeding" value="a" id="a">
+                        <label for="a"></label>
+                    </div>
+                    <span class="label-text">Accidental</span>
+                </div>
+            </fieldset>
+        
+            <fieldset>
+                <legend>Bird Type</legend>
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="bop" id="bop">
+                        <label for="bop"></label>
+                    </div>
+                    <span class="label-text">Birds of Prey</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="c" id="c">
+                        <label for="c"></label>
+                    </div>
+                    <span class="label-text">Corvids</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="dp" id="dp">
+                        <label for="dp"></label>
+                    </div>
+                    <span class="label-text">Doves and Pigeons</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="d" id="d">
+                        <label for="d"></label>
+                    </div>
+                    <span class="label-text">Ducks</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="gb" id="gb">
+                        <label for="gb"></label>
+                    </div>
+                    <span class="label-text">Game Birds</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="lp" id="lp">
+                        <label for="lp"></label>
+                    </div>
+                    <span class="label-text">Larger Passerines</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="s" id="s">
+                        <label for="s"></label>
+                    </div>
+                    <span class="label-text">Seabirds</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="sp" id="sp">
+                        <label for="sp"></label>
+                    </div>
+                    <span class="label-text">Smaller Passerines</span>
+                </div>
+                
+                <div class="checkbox-wrapper">
+                    <div class="round">
+                        <input type="checkbox" name="type" value="w" id="w">
+                        <label for="w"></label>
+                    </div>
+                    <span class="label-text">Waders</span>
+                </div>
+            </fieldset>
+        
+            <button class="button" type="submit">Generate Random Bird</button>
+        </form>
+    
+        <div id="result">Load your bird data first, then click generate!</div>
+    
+        <input type="file" class="file" id="csvFile" accept=".csv">
+        <label for="csvFile" class="filebutton">Upload a File</label>
+    </div>
+
+    <!-- This loads the CSV reading library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    
+    <script>
+let birdData = [];
+
+const columnMapping = {
+    'resb': 'Resident breeder',
+    'mb': 'Migrant breeder',
+    'introb': 'Introduced breeder',
+    'sb': 'Scarce breeder',
+    'sv': 'Scarce visitor',
+    'v': 'Visitor',
+    'wv': 'Winter visitor',
+    'a': 'Accidental',
+    'bop': 'Birds of prey',
+    'c': 'Corvids',
+    'dp': 'Doves/Pigeons',
+    'd': 'Ducks',
+    'gb': 'Game birds',
+    'lp': 'Larger passerines',
+    's': 'Seabirds',
+    'sp': 'Smaller passerines',
+    'w': 'Waders'
+};
+
+document.getElementById('csvFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById('result').textContent = 'Loading...';
+
+    Papa.parse(file, {
+        header: true,
+        dynamicTyping: false,
+        transformHeader: h => h.trim(),
+        complete: function(results) {
+            birdData = results.data.map(row => {
+                const cleaned = {};
+                for (let key in row) {
+                    const raw = row[key];
+                    if (key.trim() === 'Species' || key.trim() === '') {
+                        // Keep Species and Latin name as strings
+                        cleaned[key.trim()] = String(raw).trim();
+                    } else {
+                        // Convert other columns to booleans
+                        cleaned[key.trim()] = String(raw).trim().toLowerCase() === 'true';
+                    }
+                }
+                return cleaned;
+            });
+
+            console.log("Cleaned sample:", birdData.slice(0, 3));
+            document.getElementById('result').textContent = `Loaded ${birdData.length} birds. Ready to generate!`;
+        }
+    });
+});
+
+document.getElementById('birdForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if (birdData.length === 0) {
+        document.getElementById('result').textContent = 'Please load your CSV file first.';
+        return;
+    }
+
+    const formData = new FormData(event.target);
+    const selectedFilters = {};
+
+    for (let [group, value] of formData.entries()) {
+        if (!selectedFilters[group]) selectedFilters[group] = [];
+        selectedFilters[group].push(value);
+    }
+
+    const filtered = birdData.filter(bird => {
+        return Object.keys(selectedFilters).every(group => {
+            return selectedFilters[group].some(value => {
+                const column = columnMapping[value];
+                return bird[column] === true;
+            });
+        });
+    });
+
+    if (filtered.length > 0) {
+        const randomBird = filtered[Math.floor(Math.random() * filtered.length)];
+        const commonName = randomBird["Species"];
+        const latinName = randomBird[""];
+
+        // Search iNaturalist using Latin name first, then common name as fallback
+        const searchTerms = [latinName, commonName];
+        
+        function tryiNaturalistSearch(terms, index = 0) {
+            if (index >= terms.length) {
+                // No more terms to try
+                document.getElementById('result').innerHTML = `
+                    <strong>Generated Bird:</strong><br>
+                    <strong>Common Name:</strong> ${commonName}<br>
+                    <strong>Latin Name:</strong> <em>${latinName}</em><br>
+                    No image found on iNaturalist.
+                `;
+                return;
+            }
+            
+            const searchTerm = terms[index];
+            
+            fetch(`https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(searchTerm)}&iconic_taxa=Aves&place_id=6857&per_page=1`)
+                .then(res => res.json())
+                .then(data => {
+                    const result = data.results[0];
+                    const imageUrl = result?.default_photo?.medium_url || null;
+                    
+                    if (imageUrl) {
+                        // Found an image
+                        document.getElementById('result').innerHTML = `
+                            <strong>Generated Bird:</strong><br>
+                            <strong>Common Name:</strong> ${commonName}<br>
+                            <strong>Latin Name:</strong> <em>${latinName}</em><br>
+                            <img src="${imageUrl}" alt="${commonName}" style="max-width:300px;">
+                        `;
+                    } else {
+                        // No image found, try next search term
+                        tryiNaturalistSearch(terms, index + 1);
+                    }
+                })
+                .catch(err => {
+                    console.error(`iNaturalist search failed for "${searchTerm}":`, err);
+                    // Try next search term
+                    tryiNaturalistSearch(terms, index + 1);
+                });
+        }
+        
+        tryiNaturalistSearch(searchTerms);
+    } else {
+        document.getElementById('result').textContent = 'No birds match your filters.';
+    }
+});
+</script>
+
+</body>
+</html>
