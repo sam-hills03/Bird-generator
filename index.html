@@ -289,10 +289,10 @@
             <button class="button" type="submit">Generate Random Bird</button>
         </form>
     
-        <div id="result">Load your bird data first, then click generate!</div>
+        <div id="result">Loading bird data...</div>
     
-        <input type="file" class="file" id="csvFile" accept=".csv">
-        <label for="csvFile" class="filebutton">Upload a File</label>
+        <input type="file" class="file" id="csvFile" accept=".csv" style="display: none;">
+        <label for="csvFile" class="filebutton" style="display: none;">Upload a File</label>
     </div>
 
     <!-- This loads the CSV reading library -->
@@ -320,6 +320,94 @@ const columnMapping = {
     'sp': 'Smaller passerines',
     'w': 'Waders'
 };
+
+// Load CSV data automatically when page loads
+async function loadBirdData() {
+    try {
+        document.getElementById('result').textContent = 'Loading bird data...';
+        
+        const response = await fetch('birds3.csv');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        Papa.parse(csvText, {
+            header: true,
+            dynamicTyping: false,
+            transformHeader: h => h.trim(),
+            complete: function(results) {
+                birdData = results.data.map(row => {
+                    const cleaned = {};
+                    for (let key in row) {
+                        const raw = row[key];
+                        if (key.trim() === 'Species' || key.trim() === '') {
+                            // Keep Species and Latin name as strings
+                            cleaned[key.trim()] = String(raw).trim();
+                        } else {
+                            // Convert other columns to booleans
+                            cleaned[key.trim()] = String(raw).trim().toLowerCase() === 'true';
+                        }
+                    }
+                    return cleaned;
+                });
+
+                console.log("Loaded sample:", birdData.slice(0, 3));
+                document.getElementById('result').textContent = `Loaded ${birdData.length} birds. Ready to generate!`;
+            }
+        });
+    } catch (error) {
+        console.error('Error loading CSV:', error);
+        document.getElementById('result').innerHTML = `
+            <div>Could not load birds3.csv automatically.</div>
+            <div>Please upload your CSV file:</div>
+        `;
+        
+        // Show the file upload as fallback
+        document.getElementById('csvFile').style.display = 'block';
+        document.querySelector('label[for="csvFile"]').style.display = 'inline-block';
+        
+        // Set up file upload functionality
+        document.getElementById('csvFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('result').textContent = 'Loading...';
+
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: false,
+                transformHeader: h => h.trim(),
+                complete: function(results) {
+                    birdData = results.data.map(row => {
+                        const cleaned = {};
+                        for (let key in row) {
+                            const raw = row[key];
+                            if (key.trim() === 'Species' || key.trim() === '') {
+                                cleaned[key.trim()] = String(raw).trim();
+                            } else {
+                                cleaned[key.trim()] = String(raw).trim().toLowerCase() === 'true';
+                            }
+                        }
+                        return cleaned;
+                    });
+
+                    console.log("Cleaned sample:", birdData.slice(0, 3));
+                    document.getElementById('result').textContent = `Loaded ${birdData.length} birds. Ready to generate!`;
+                    
+                    // Hide file upload after successful load
+                    document.getElementById('csvFile').style.display = 'none';
+                    document.querySelector('label[for="csvFile"]').style.display = 'none';
+                }
+            });
+        });
+    }
+}
+
+// Load data when page loads
+window.addEventListener('load', loadBirdData);
 
 document.getElementById('csvFile').addEventListener('change', function(event) {
     const file = event.target.files[0];
@@ -400,23 +488,59 @@ document.getElementById('birdForm').addEventListener('submit', function(event) {
             
             const searchTerm = terms[index];
             
-            fetch(`https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(searchTerm)}&iconic_taxa=Aves&place_id=6857&per_page=1`)
+            fetch(`https://api.inaturalist.org/v1/taxa?q=${encodeURIComponent(searchTerm)}&iconic_taxa=Aves&rank=species&per_page=5`)
                 .then(res => res.json())
                 .then(data => {
-                    const result = data.results[0];
-                    const imageUrl = result?.default_photo?.medium_url || null;
+                    let result = null;
+                    let imageUrl = null;
+                    
+                    if (data.results && data.results.length > 0) {
+                        // ONLY accept exact matches for Latin names
+                        if (searchTerm === latinName) {
+                            result = data.results.find(r => 
+                                r.name && r.name.toLowerCase() === latinName.toLowerCase()
+                            );
+                            
+                            // Only use image if we found an exact Latin name match
+                            if (result && result.default_photo && result.default_photo.medium_url) {
+                                imageUrl = result.default_photo.medium_url;
+                            }
+                        }
+                        
+                        // For common names, also require exact match
+                        if (!result && searchTerm === commonName) {
+                            result = data.results.find(r => 
+                                r.preferred_common_name && 
+                                r.preferred_common_name.toLowerCase() === commonName.toLowerCase()
+                            );
+                            
+                            // Only use image if we found an exact common name match
+                            if (result && result.default_photo && result.default_photo.medium_url) {
+                                imageUrl = result.default_photo.medium_url;
+                            }
+                        }
+                    }
                     
                     if (imageUrl) {
-                        // Found an image
+                        // Found exact match with image
                         document.getElementById('result').innerHTML = `
                             <strong>Generated Bird:</strong><br>
                             <strong>Common Name:</strong> ${commonName}<br>
                             <strong>Latin Name:</strong> <em>${latinName}</em><br>
-                            <img src="${imageUrl}" alt="${commonName}" style="max-width:300px;">
+                            <img src="${imageUrl}" alt="${commonName}" style="max-width:300px;"><br>
+                            <small>✓ Exact match: ${result.preferred_common_name || result.name}</small>
                         `;
-                    } else {
-                        // No image found, try next search term
+                    } else if (index < terms.length - 1) {
+                        // No exact match found, try next search term
                         tryiNaturalistSearch(terms, index + 1);
+                    } else {
+                        // No exact matches found with any search term
+                        document.getElementById('result').innerHTML = `
+                            <strong>Generated Bird:</strong><br>
+                            <strong>Common Name:</strong> ${commonName}<br>
+                            <strong>Latin Name:</strong> <em>${latinName}</em><br>
+                            <em>No exact species match found in iNaturalist database</em>
+                        `;
                     }
                 })
                 .catch(err => {
